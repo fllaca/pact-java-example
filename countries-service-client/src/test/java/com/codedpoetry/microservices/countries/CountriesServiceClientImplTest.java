@@ -1,19 +1,26 @@
 package com.codedpoetry.microservices.countries;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.http.HttpHeaders;
+import org.json.JSONObject;
 import org.springframework.http.MediaType;
 
 import au.com.dius.pact.consumer.ConsumerPactTest;
+import au.com.dius.pact.consumer.dsl.PactDslJsonBody;
 import au.com.dius.pact.consumer.dsl.PactDslWithProvider;
 import au.com.dius.pact.model.PactFragment;
 
 public class CountriesServiceClientImplTest extends ConsumerPactTest {
+	
+	PactDslJsonBody body = new PactDslJsonBody()
+		    .stringType("name")
+		    .stringType("code")
+		    .asBody();
 	
 	@Override
     protected PactFragment createFragment(PactDslWithProvider builder) {
@@ -28,13 +35,14 @@ public class CountriesServiceClientImplTest extends ConsumerPactTest {
 		return builder
             .given("Found") 
             .uponReceiving("Country exists")
-                .path("/api/1/country/ESP")
+                //.path("/api/1/country/ESP")
+                .matchPath("/api/1/country/[A-Z]+", "/api/1/country/ESP")
                 .method("GET")
                 .headers(requestHeaders)
             .willRespondWith()
                 .status(200)
                 .headers(responseHeaders )
-                .body("{\"code\": \"ESP\", \"name\": \"Spain\"}")
+                .body(body)
             /*.given("Not Found") 
             .uponReceiving("Country DOES NOT exists")
 	            .path("/api/1/country/UNKNOWN")
@@ -62,11 +70,12 @@ public class CountriesServiceClientImplTest extends ConsumerPactTest {
 		CountriesServiceClientImpl countriesServiceClientImpl = new CountriesServiceClientImpl(url);
 		
         String countryCode = "ESP";
-        String countryName = "Spain";
 		
         Country country = countriesServiceClientImpl.getCountry(countryCode);
-		assertEquals(countryCode, country.getCode());
-		assertEquals(countryName, country.getName());
+        
+        JSONObject json = (JSONObject) body.getBody();
+        assertEquals(json.get("code"), country.getCode());
+		assertEquals(json.get("name"), country.getName());
 	}
 
 }

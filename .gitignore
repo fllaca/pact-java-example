@@ -16,3 +16,5 @@ countries-service/\.classpath
 countries-service/\.project
 
 countries-service/\.settings/
+
+pacts/
