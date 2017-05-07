@@ -1,0 +1,39 @@
+{
+    "provider": {
+        "name": "test_provider"
+    },
+    "consumer": {
+        "name": "test_consumer"
+    },
+    "interactions": [
+        {
+            "description": "Country exists",
+            "request": {
+                "method": "GET",
+                "path": "/api/1/country/ESP",
+                "headers": {
+                    "Accept": "application/json"
+                }
+            },
+            "response": {
+                "status": 200,
+                "headers": {
+                    "Content-Type": "application/json"
+                },
+                "body": {
+                    "code": "ESP",
+                    "name": "Spain"
+                }
+            },
+            "providerState": "Found"
+        }
+    ],
+    "metadata": {
+        "pact-specification": {
+            "version": "2.0.0"
+        },
+        "pact-jvm": {
+            "version": "3.3.8"
+        }
+    }
+}
